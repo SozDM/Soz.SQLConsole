@@ -19,10 +19,7 @@ namespace Soz.SQLConsole
 
         static void Main()
         {
-            //var x = ConnectToDatabaseAsync();
             Console.WriteLine("Connecting to database...");
-
-
 
             bool Stay = true, PrintHelp = true;
             while (Stay)
@@ -118,7 +115,7 @@ namespace Soz.SQLConsole
         static void OrdersShowByUser()
         {
             strUserId = strUserId.InputIdByString("UserId", UserIdList);
-            var OrderList = order.IdByUser(Int32.Parse(strUserId));
+            var OrderList = order.GetIdByUser(Int32.Parse(strUserId));
             if (OrderList[0] == 0) Console.WriteLine("There is no orders by this user");
             else
             {

@@ -55,8 +55,8 @@ namespace Soz.SQLConsole
             }
         }
 
-        public List<int> IdByUser(int userId)     // if there are no orders list[0] = 0 
-        {                                               // else returns list of order id
+        public List<int> GetIdByUser(int userId)     // if there are no orders list[0] = 0 
+        {                                         // else returns list of order id
             var OrderIdList = new List<int>();
             using (var context = new MyDBContext())
             {
