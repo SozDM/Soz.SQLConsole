@@ -9,7 +9,7 @@ namespace Soz.SQLConsole
     {
         static void Main()
         {
-            var x = ConnectToDatabaseAsync();
+            //ar x = ConnectToDatabaseAsync();
 
             Console.WriteLine("Input \"help\" for help");
 
@@ -19,6 +19,8 @@ namespace Soz.SQLConsole
 
                 var user = new User();
                 var order = new Order();
+                string HowMany = "";
+                int IntHowMany = 0;
 
                 Console.Write("Input command: ");
                 string command = Console.ReadLine();
@@ -46,6 +48,11 @@ namespace Soz.SQLConsole
                         order.AddOrder();
                         break;
 
+                    case "order-add-rnd":
+                        HowMany = HowMany.InputIntByString("number of orders");
+                        IntHowMany = Int32.Parse(HowMany);
+                        order.AddRandomOrders(IntHowMany);
+                        break;
 
                     case "order-edit":
                         order.EditOrder();

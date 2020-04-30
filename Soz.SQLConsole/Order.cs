@@ -31,11 +31,41 @@ namespace Soz.SQLConsole
             }
         }
 
+        public void AddRandomOrders(int HowMany)
+        {
+            var rnd = new Random();
+            using (var context = new MyDBContext())
+            {
+                var UserIdList = new List<int>();
+                var users = context.Users;
+                foreach (var item in users)
+                {
+                    UserIdList.Add(item.Id);
+                }
+
+                for (int i = 0; i < HowMany; i++)
+                {
+
+                    Amount = rnd.Next(10, 100);
+                    Description = "Order made by random";
+                    UserId = rnd.Next(UserIdList.Count);
+
+                    var order = new Order();
+                    order.Amount = Amount;
+                    order.Description = Description;
+                    order.UserId = UserIdList[UserId];
+                    order.Date = DateTime.Now;
+
+                    context.Orders.Add(order);
+                    context.SaveChanges();
+                }
+            }
+        }
+
         public void ShowOrdersByUser()
         {
             using (var context = new MyDBContext())
             {
-
                 var UserIdList = new List<int>();
                 string userId = "";
                 
