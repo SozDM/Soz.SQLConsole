@@ -27,21 +27,7 @@ namespace Soz.SQLConsole
             bool Stay = true, PrintHelp = true;
             while (Stay)
             {
-                using (var context = new MyDBContext())
-                {
-                    var users = context.UserManagers;
-                    UserIdList.Clear();
-                    foreach (var item in users)
-                    {
-                        UserIdList.Add(item.Id);
-                    }
-                    var orders = context.Orders;
-                    OrderIdList.Clear();
-                    foreach (var item in orders)
-                    {
-                        OrderIdList.Add(item.Id);
-                    }
-                }
+                GetLists();
 
                 if (PrintHelp)
                 {
@@ -64,7 +50,7 @@ namespace Soz.SQLConsole
                         break;
 
                     case "user-order-show":
-                        ShowOrdersByUser();
+                        OrdersShowByUser();
                         break;
 
                     case "order-show-all":
@@ -97,16 +83,39 @@ namespace Soz.SQLConsole
             }
         }
 
+        static void GetLists()
+        {
+            using (var context = new MyDBContext())
+            {
+                var users = context.UserManagers;
+                UserIdList.Clear();
+                foreach (var item in users)
+                {
+                    UserIdList.Add(item.Id);
+                }
+                var orders = context.Orders;
+                OrderIdList.Clear();
+                foreach (var item in orders)
+                {
+                    OrderIdList.Add(item.Id);
+                }
+            }
+        }
+
         static void UserAdd()
         {
             string UserName = "";
             UserName = UserName.InputStringNotWhiteSpace("name");
+            if (UserName == "exit") return;
+
             string UserAddress = "";
             UserAddress = UserAddress.InputStringNotWhiteSpace("address");
+            if (UserName == "exit") return;
+
             Console.WriteLine(userManager.AddUser(UserName, UserAddress));
         }
 
-        static void ShowOrdersByUser()
+        static void OrdersShowByUser()
         {
             strUserId = strUserId.InputIdByString("UserId", UserIdList);
             var OrderList = order.IdByUser(Int32.Parse(strUserId));
@@ -184,7 +193,7 @@ namespace Soz.SQLConsole
             Console.WriteLine("\t\"order-show-all\"\tto show all orders");
             Console.WriteLine("\t\"order-edit\"\t\tto edit order");
             Console.WriteLine("\t\"order-del\"\t\tto delete order");
-            Console.WriteLine("\t\"exit\"\t\t\tto exit program");
+            Console.WriteLine("\t\"exit\"\t\t\tto exit from any part of program");
         }
     }
 }
