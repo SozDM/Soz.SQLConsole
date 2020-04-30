@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
-using System.Text;
 
 namespace Soz.SQLConsole
 {
@@ -13,39 +12,33 @@ namespace Soz.SQLConsole
         public int Amount { get; set; }
         public string Description { get; set; }
         public int UserId { get; set; }
-        public virtual User User { get; set; }
+        public virtual UserManager User { get; set; }
 
         public Order()
         {
         }
 
-        public void ShowOrders()
+        public string OrderInfo(int OrderId)
         {
             using (var context = new MyDBContext())
             {
-                var orders = context.Orders;
-                foreach (var item in orders)
-                {
-                    item.ShowOrderInfo();
-                }
+                var order = context.Orders.First(order => order.Id == OrderId);
+                
+                string OrderInfo = "";
+                OrderInfo = $"#{order.Id}\tDate:{order.Date}\tUserId:{order.UserId}";
+                OrderInfo += $"\tamount:{order.Amount}\tdescription: {order.Description}\n";
+
+                return OrderInfo;
             }
         }
 
-        public void AddRandomOrders(int HowMany)
+        public void AddRandomOrders(int HowMany, List<int> UserIdList)
         {
             var rnd = new Random();
             using (var context = new MyDBContext())
             {
-                var UserIdList = new List<int>();
-                var users = context.Users;
-                foreach (var item in users)
-                {
-                    UserIdList.Add(item.Id);
-                }
-
                 for (int i = 0; i < HowMany; i++)
                 {
-
                     Amount = rnd.Next(10, 100);
                     Description = "Order made by random";
                     UserId = rnd.Next(UserIdList.Count);
@@ -62,128 +55,71 @@ namespace Soz.SQLConsole
             }
         }
 
-        public void ShowOrdersByUser()
-        {
+        public List<int> OrdersIdByUser(int userId)     // if there are no orders list[0] = 0 
+        {                                               // else returns list of order id
+            var OrderIdList = new List<int>();
             using (var context = new MyDBContext())
             {
-                var UserIdList = new List<int>();
-                string userId = "";
-                
-                var users = context.Users;
-                foreach (var item in users)
-                {
-                    UserIdList.Add(item.Id);
-                }
-
-                userId = userId.InputIdByString("UserId", UserIdList);
-                int intUserId = Int32.Parse(userId);
-
                 var orders = context.Orders;
 
                 int OrdersByThisUser = 0;
 
                 foreach (var item in orders)
                 {
-                    if (item.UserId == intUserId)
+                    if (item.UserId == userId)
                     {
                         OrdersByThisUser++;
-                        item.ShowOrderInfo();
+                        OrderIdList.Add(item.Id);
                     }
                 }
-                if (OrdersByThisUser == 0) Console.WriteLine("There are no orders by this user");
+                if (OrdersByThisUser == 0) OrderIdList.Add(0);
+                
+                return OrderIdList;
             }
         }
 
-        public void AddOrder()
+        public int AddOrder(int userId, int amount, string description)
         {
-            var UserIdList = new List<int>();
-
-            using (var context = new MyDBContext())
-            {
-                var users = context.Users;
-                foreach (var item in users)
-                {
-                    UserIdList.Add(item.Id);
-                }
-            }
-
-            string amount = "", description = "", userId = "";
-
-            userId = userId.InputIdByString("UserId", UserIdList);
-
-            amount = amount.InputIntByString("amount");
-
-            description = description.InputStringNotWhiteSpace("description");
-
             using (var context = new MyDBContext())     //saving user to database
             {
                 var order = new Order
                 {
-                    Amount = Int32.Parse(amount),
+                    Amount = amount,
                     Description = description,
                     Date = DateTime.Now,
-                    UserId = Int32.Parse(userId)
+                    UserId = userId
                 };
 
                 context.Orders.Add(order);
                 context.SaveChanges();
                 Id = order.Id;
             }
-            Console.WriteLine($"Order #{Id} from user#{userId} created");
+            return Id;
         }
 
-        public void EditOrder()
+        public void EditOrder(int orderId, int amount, string description)
         {
             using (var context = new MyDBContext())
             {
                 var orders = context.Orders;
-                var OrderIdList = new List<int>();
+                
+                var OrderToEdit = context.Orders.First(order => order.Id == orderId);
 
-                foreach (var item in orders)
-                {
-                    OrderIdList.Add(item.Id);
-                }
-                string OrderToChangeId = "";
-                OrderToChangeId = OrderToChangeId.InputIdByString("OrderId", OrderIdList);
-                int IntOrderToEditId = Int32.Parse(OrderToChangeId);
-
-                var OrderToEdit = context.Orders.First(order => order.Id == IntOrderToEditId);
-                OrderToEdit.ShowOrderInfo();
-
-                string NewAmount = "";
-                NewAmount = NewAmount.InputIntByString("amount");
-                int IntNewAmount = Int32.Parse(NewAmount);
-
-                string NewDescription = "";
-                NewDescription = NewDescription.InputStringNotWhiteSpace("description");
-
-                OrderToEdit.Amount = IntNewAmount;
-                OrderToEdit.Description = NewDescription;
+                OrderToEdit.Amount = amount;
+                OrderToEdit.Description = description;
                 context.SaveChanges();
             }
         }
 
-        public void DeleteOrder()
+        public void DeleteOrder(int orderId)
         {
             using (var context = new MyDBContext())
             {
                 var orders = context.Orders;
-                var OrderIdList = new List<int>();
-
-                foreach (var item in orders)
-                {
-                    OrderIdList.Add(item.Id);
-                }
-
-                string OrderToDeleteId = "";
-                OrderToDeleteId = OrderToDeleteId.InputIdByString("OrderId", OrderIdList);
-
-                int IntOrderToDeleteId = Int32.Parse(OrderToDeleteId);
-                var OrderToDelete = context.Orders.First(order => order.Id == IntOrderToDeleteId);
+                
+                var OrderToDelete = context.Orders.First(order => order.Id == orderId);
                 context.Orders.Remove(OrderToDelete);
                 context.SaveChanges();
-
-                Console.WriteLine($"Order #{OrderToDeleteId} is deleted");
             }
         }
     }

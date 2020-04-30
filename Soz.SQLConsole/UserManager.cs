@@ -4,13 +4,13 @@ using System.Text;
 
 namespace Soz.SQLConsole
 {
-    public class User
+    public class UserManager
     {
         public int Id { get; private set; }
         public string Name{ get; private set; }
         public string Address { get; private set; }
         
-        public User()
+        public UserManager()
         {
         }
         public virtual ICollection<Order> Orders { get; set; }
@@ -21,24 +21,19 @@ namespace Soz.SQLConsole
             Console.WriteLine("\t\"user-order-show\"\tto show all orders of this user");
             Console.WriteLine("\t\"order-add\"\t\tto add order");
             Console.WriteLine("\t\"order-add-rnd\"\t\tto add random orders");
+            Console.WriteLine("\t\"order-show-all\"\t\tto show all orders");
             Console.WriteLine("\t\"order-edit\"\t\tto edit order");
             Console.WriteLine("\t\"order-del\"\t\tto delete order");
-            Console.WriteLine("\t\"order-show\"\t\tto show all orders");
             Console.WriteLine("\t\"exit\"\t\t\tto exit program");
         }
 
-        public void AddUser()       //create new user and add to database
+        public string AddUser(string name, string address)       //create new user and add to database
         {
-            string name = "", address = "";
             int Id = 0;
-
-            name = name.InputStringNotWhiteSpace("name");
-
-            address = address.InputStringNotWhiteSpace("address");
             
             using (var context = new MyDBContext())     //saving user to database
             {
-                var user = new User
+                var user = new UserManager
                 {
                     Name = name,
                     Address = address
@@ -47,7 +42,7 @@ namespace Soz.SQLConsole
                 context.SaveChanges();
                 Id = user.Id;
             }
-            Console.WriteLine($"User #{Id} created");
+            return $"User #{Id} created";
         }
     }
 }

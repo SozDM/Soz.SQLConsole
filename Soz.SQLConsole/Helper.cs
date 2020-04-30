@@ -52,11 +52,5 @@ namespace Soz.SQLConsole
             }
             return Id;
         }
-
-        public static void ShowOrderInfo(this Order item)
-        {
-            Console.Write($"#{item.Id}\tDate:{item.Date}\tUserId:{item.UserId}");
-            Console.WriteLine($"\tamount:{item.Amount}\tdescription: {item.Description}");
-        }
     }
 }
