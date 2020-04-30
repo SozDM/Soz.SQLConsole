@@ -15,18 +15,6 @@ namespace Soz.SQLConsole
         }
         public virtual ICollection<Order> Orders { get; set; }
 
-        public void ShowHelp()
-        {
-            Console.WriteLine("\t\"user-add\"\t\tto add user");
-            Console.WriteLine("\t\"user-order-show\"\tto show all orders of this user");
-            Console.WriteLine("\t\"order-add\"\t\tto add order");
-            Console.WriteLine("\t\"order-add-rnd\"\t\tto add random orders");
-            Console.WriteLine("\t\"order-show-all\"\t\tto show all orders");
-            Console.WriteLine("\t\"order-edit\"\t\tto edit order");
-            Console.WriteLine("\t\"order-del\"\t\tto delete order");
-            Console.WriteLine("\t\"exit\"\t\t\tto exit program");
-        }
-
         public string AddUser(string name, string address)       //create new user and add to database
         {
             int Id = 0;

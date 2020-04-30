@@ -39,7 +39,7 @@ namespace Soz.SQLConsole
         public static string InputIdByString(this string Id, string IdName, List<int> IdList)
         {
             bool ValidId = false;
-            while (!ValidId)      // Setting ID of user
+            while (!ValidId)
             {
                 Console.Write($"Input {IdName}: ");
                 Id = Console.ReadLine();

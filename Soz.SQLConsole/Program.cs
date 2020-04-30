@@ -12,10 +12,10 @@ namespace Soz.SQLConsole
         static Order order = new Order();
         static string HowMany = "", strUserId = "", amount = "", description = "",
                       strOrderId = "";
+
         static int IntHowMany = 0;
         static List<int> UserIdList = new List<int>();
         static List<int> OrderIdList = new List<int>();
-
 
         static void Main()
         {
@@ -54,7 +54,7 @@ namespace Soz.SQLConsole
                 switch (command)
                 {
                     case "help":
-                        userManager.ShowHelp();
+                        ShowHelp();
                         break;
 
                     case "user-add":
@@ -88,11 +88,9 @@ namespace Soz.SQLConsole
                     case "login":
                         break;//todo сделать возможность логина в базу
 
-
                     case "exit":
                         Stay = false;
                         break;
-
                 }
             }
 
@@ -174,6 +172,18 @@ namespace Soz.SQLConsole
             strOrderId = strOrderId.InputIdByString("OrderId", OrderIdList);
             if (strOrderId == "exit") return;
             order.Delete(Int32.Parse(strOrderId));
+        }
+
+        static void ShowHelp()
+        {
+            Console.WriteLine("\t\"user-add\"\t\tto add user");
+            Console.WriteLine("\t\"user-order-show\"\tto show all orders of this user");
+            Console.WriteLine("\t\"order-add\"\t\tto add order");
+            Console.WriteLine("\t\"order-add-rnd\"\t\tto add random orders");
+            Console.WriteLine("\t\"order-show-all\"\t\tto show all orders");
+            Console.WriteLine("\t\"order-edit\"\t\tto edit order");
+            Console.WriteLine("\t\"order-del\"\t\tto delete order");
+            Console.WriteLine("\t\"exit\"\t\t\tto exit program");
         }
     }
 }
