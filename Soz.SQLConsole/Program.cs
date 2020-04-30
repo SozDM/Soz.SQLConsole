@@ -30,11 +30,13 @@ namespace Soz.SQLConsole
                 using (var context = new MyDBContext())
                 {
                     var users = context.UserManagers;
+                    UserIdList.Clear();
                     foreach (var item in users)
                     {
                         UserIdList.Add(item.Id);
                     }
                     var orders = context.Orders;
+                    OrderIdList.Clear();
                     foreach (var item in orders)
                     {
                         OrderIdList.Add(item.Id);
@@ -93,16 +95,15 @@ namespace Soz.SQLConsole
                         break;
                 }
             }
+        }
 
-            void UserAdd()
-            {
-                string UserName = "";
-                UserName = UserName.InputStringNotWhiteSpace("name");
-                string UserAddress = "";
-                UserAddress = UserAddress.InputStringNotWhiteSpace("address");
-                Console.WriteLine(userManager.AddUser(UserName, UserAddress));
-            }
-
+        static void UserAdd()
+        {
+            string UserName = "";
+            UserName = UserName.InputStringNotWhiteSpace("name");
+            string UserAddress = "";
+            UserAddress = UserAddress.InputStringNotWhiteSpace("address");
+            Console.WriteLine(userManager.AddUser(UserName, UserAddress));
         }
 
         static void ShowOrdersByUser()
