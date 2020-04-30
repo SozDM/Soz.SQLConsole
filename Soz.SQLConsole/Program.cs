@@ -8,25 +8,28 @@ namespace Soz.SQLConsole
 {
     class Program
     {
+        static UserManager userManager = new UserManager();
+        static Order order = new Order();
+        static string HowMany = "", strUserId = "", amount = "", description = "",
+                      strOrderId = "";
+        static int IntHowMany = 0;
+        static List<int> UserIdList = new List<int>();
+        static List<int> OrderIdList = new List<int>();
+
 
         static void Main()
         {
             //var x = ConnectToDatabaseAsync();
             Console.WriteLine("Connecting to database...");
 
+
+
             bool Stay = true, PrintHelp = true;
             while (Stay)
             {
-                var userManager = new UserManager();
-                var order = new Order();
-                string HowMany = "";
-                int IntHowMany = 0;
-                var UserIdList = new List<int>();
-                var OrderIdList = new List<int>();
-
                 using (var context = new MyDBContext())
                 {
-                    var users = context.Users;
+                    var users = context.UserManagers;
                     foreach (var item in users)
                     {
                         UserIdList.Add(item.Id);
@@ -55,81 +58,31 @@ namespace Soz.SQLConsole
                         break;
 
                     case "user-add":
-                        string UserName = "";
-                        UserName = UserName.InputStringNotWhiteSpace("name");
-                        string UserAddress = "";
-                        UserAddress = UserAddress.InputStringNotWhiteSpace("address");
-                        Console.WriteLine(userManager.AddUser(UserName, UserAddress));
+                        UserAdd();
                         break;
 
                     case "user-order-show":
-                        string strUserId = "";
-                        strUserId = strUserId.InputIdByString("UserId", UserIdList);
-                        var OrderList = order.OrdersIdByUser(Int32.Parse(strUserId));
-                        if (OrderList[0] == 0) Console.WriteLine("There is no orders by this user");
-                        else
-                        {
-                            foreach (var item in OrderList)
-                            {
-                                Console.Write(order.OrderInfo(item));
-                            }
-                        }
+                        ShowOrdersByUser();
                         break;
 
                     case "order-show-all":
-                        foreach(var item in OrderIdList) 
-                        { 
-                            Console.Write(order.OrderInfo(item));
-                        }
+                        OrdersShowAll();
                         break;
 
                     case "order-add":
-                        strUserId = "";
-                        strUserId = strUserId.InputIdByString("UserId", UserIdList);
-                        if (strUserId == "exit") break;
-
-                        string amount = "";
-                        amount = amount.InputIntByString("amount");
-                        if (amount == "exit") break;
-
-                        string description = "";
-                        description = description.InputStringNotWhiteSpace("description");
-                        if (description == "exit") break;
-
-                        var orderId = order.AddOrder(Int32.Parse(strUserId),Int32.Parse(amount), description);
-                        Console.WriteLine($"Order #{orderId} successfully added");
-                        
+                        OrderAdd();
                         break;
 
                     case "order-add-rnd":
-                        HowMany = HowMany.InputIntByString("number of orders");
-                        if (HowMany == "exit") break;
-                        IntHowMany = Int32.Parse(HowMany);
-                        order.AddRandomOrders(IntHowMany, UserIdList);
+                        OrdersAddRandom();
                         break;
 
                     case "order-edit":
-                        string strOrderId = "";
-                        strOrderId = strOrderId.InputIntByString("orderId");
-                        if (strOrderId == "exit") break;
-
-                        amount = "";
-                        if (amount == "exit") break;
-                        amount = amount.InputIntByString("amount");
-                        
-                        description = "";
-                        description = description.InputStringNotWhiteSpace("description");
-                        if (description== "exit") break;
-
-                        order.EditOrder(Int32.Parse(strOrderId),Int32.Parse(amount), description);
-                        Console.WriteLine($"Order #{Int32.Parse(strOrderId)} is edited");
+                        OrderEdit();
                         break;
 
                     case "order-del":
-                        strOrderId = "";
-                        strOrderId = strOrderId.InputIdByString("OrderId", OrderIdList);
-                        if (strOrderId == "exit") break;
-                        order.DeleteOrder(Int32.Parse(strOrderId));
+                        OrderDelete();
                         break;
 
                     case "login":
@@ -142,16 +95,85 @@ namespace Soz.SQLConsole
 
                 }
             }
-        }
-        public static void ConnectToDatabase()
-        {
-            using (var context = new MyDBContext()) 
+
+            void UserAdd()
             {
+                string UserName = "";
+                UserName = UserName.InputStringNotWhiteSpace("name");
+                string UserAddress = "";
+                UserAddress = UserAddress.InputStringNotWhiteSpace("address");
+                Console.WriteLine(userManager.AddUser(UserName, UserAddress));
+            }
+
+        }
+
+        static void ShowOrdersByUser()
+        {
+            strUserId = strUserId.InputIdByString("UserId", UserIdList);
+            var OrderList = order.IdByUser(Int32.Parse(strUserId));
+            if (OrderList[0] == 0) Console.WriteLine("There is no orders by this user");
+            else
+            {
+                foreach (var item in OrderList)
+                {
+                    Console.Write(order.Info(item));
+                }
             }
         }
-        public static async Task ConnectToDatabaseAsync()
+
+        static void OrdersShowAll()
         {
-            await Task.Run(() => ConnectToDatabase());
+            foreach (var item in OrderIdList)
+            {
+                Console.Write(order.Info(item));
+            }
+        }
+
+        static void OrderAdd()
+        {
+            strUserId = strUserId.InputIdByString("UserId", UserIdList);
+            if (strUserId == "exit") return;
+
+            amount = amount.InputIntByString("amount");
+            if (amount == "exit") return;
+
+            description = description.InputStringNotWhiteSpace("description");
+            if (description == "exit") return;
+
+            var orderId = order.Add(Int32.Parse(strUserId), Int32.Parse(amount), description);
+            Console.WriteLine($"Order #{orderId} successfully added");
+        }
+
+        static void OrdersAddRandom()
+        {
+            HowMany = HowMany.InputIntByString("number of orders");
+            if (HowMany == "exit") return;
+            IntHowMany = Int32.Parse(HowMany);
+            order.AddRandom(IntHowMany, UserIdList);
+        }
+
+        static void OrderEdit()
+        {
+            strOrderId = strOrderId.InputIntByString("orderId");
+            if (strOrderId == "exit") return;
+
+            amount = "";
+            if (amount == "exit") return;
+            amount = amount.InputIntByString("amount");
+
+            description = "";
+            description = description.InputStringNotWhiteSpace("description");
+            if (description == "exit") return;
+
+            order.Edit(Int32.Parse(strOrderId), Int32.Parse(amount), description);
+            Console.WriteLine($"Order #{Int32.Parse(strOrderId)} is edited");
+        }
+
+        static void OrderDelete()
+        {
+            strOrderId = strOrderId.InputIdByString("OrderId", OrderIdList);
+            if (strOrderId == "exit") return;
+            order.Delete(Int32.Parse(strOrderId));
         }
     }
 }

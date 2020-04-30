@@ -11,7 +11,7 @@ namespace Soz.SQLConsole
         {
         }
 
-        public DbSet<UserManager> Users { get; set; }
+        public DbSet<UserManager> UserManagers { get; set; }
         public DbSet<Order> Orders { get; set; }
     }
 }

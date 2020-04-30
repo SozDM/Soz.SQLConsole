@@ -18,7 +18,7 @@ namespace Soz.SQLConsole
         {
         }
 
-        public string OrderInfo(int OrderId)
+        public string Info(int OrderId)
         {
             using (var context = new MyDBContext())
             {
@@ -32,7 +32,7 @@ namespace Soz.SQLConsole
             }
         }
 
-        public void AddRandomOrders(int HowMany, List<int> UserIdList)
+        public void AddRandom(int HowMany, List<int> UserIdList)
         {
             var rnd = new Random();
             using (var context = new MyDBContext())
@@ -55,7 +55,7 @@ namespace Soz.SQLConsole
             }
         }
 
-        public List<int> OrdersIdByUser(int userId)     // if there are no orders list[0] = 0 
+        public List<int> IdByUser(int userId)     // if there are no orders list[0] = 0 
         {                                               // else returns list of order id
             var OrderIdList = new List<int>();
             using (var context = new MyDBContext())
@@ -78,7 +78,7 @@ namespace Soz.SQLConsole
             }
         }
 
-        public int AddOrder(int userId, int amount, string description)
+        public int Add(int userId, int amount, string description)
         {
             using (var context = new MyDBContext())     //saving user to database
             {
@@ -97,7 +97,7 @@ namespace Soz.SQLConsole
             return Id;
         }
 
-        public void EditOrder(int orderId, int amount, string description)
+        public void Edit(int orderId, int amount, string description)
         {
             using (var context = new MyDBContext())
             {
@@ -111,7 +111,7 @@ namespace Soz.SQLConsole
             }
         }
 
-        public void DeleteOrder(int orderId)
+        public void Delete(int orderId)
         {
             using (var context = new MyDBContext())
             {

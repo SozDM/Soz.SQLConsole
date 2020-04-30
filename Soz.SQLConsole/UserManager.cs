@@ -38,7 +38,7 @@ namespace Soz.SQLConsole
                     Name = name,
                     Address = address
                 };
-                context.Users.Add(user);
+                context.UserManagers.Add(user);
                 context.SaveChanges();
                 Id = user.Id;
             }
